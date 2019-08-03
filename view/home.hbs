@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Google Maps</title>
+        <style>
+            #map{
+                height:400px;
+                width:100%;
+            }
+        </style>
+        <script src="../jquery.js"></script>
+    </head>
+    <body>
+        <form action="search" id="search">
+            <input type="text" name="query" id="query" placeholder="Search for places">
+            <input id="subQuery" type="submit" name="subQuery" value="Search">
+            <select name="filter" id="filter">
+                <option value="museum">Museums</option>
+                <option value="park">Parks</option>
+                <option value="airport">Airports</option>
+                <option value="shopping_mall">Shopping Malls</option>
+            </select>
+            
+            
+            
+        </form>
+        <div id="map"></div>
+        <script>
+            var map
+            var infoWindow
+            var placeType
+            var autocomplete
+            
+            var center
+            var request
+            var service
+            var types
+            var markers = [];
+            var mapCircle
+            
+            
+                function initMap(){
+                    center = new google.maps.LatLng(14.5647, 120.9932)
+                    var options = {
+                        zoom:13,
+                        center:center
+                    }
+                    
+                    var defBounds = new google.maps.LatLngBounds(
+                        new google.maps.LatLng(19.284567, 122.575897),
+                        new google.maps.LatLng(6.678588, 118.347838)
+                    )
+                    var searchOptions = {
+                        componentRestrictions: {country: 'ph'}
+                    }
+                    
+                    var input = document.getElementById('query');
+                    types = $('#filter').val();
+                    
+                    autocomplete = new google.maps.places.Autocomplete(input, searchOptions);
+                    map = new google.maps.Map(document.getElementById('map'), options);
+                    infoWindow = new google.maps.InfoWindow();
+                    service = new google.maps.places.PlacesService(map);
+                    
+                    google.maps.event.addListener(map, 'rightclick', function(event){
+                        map.setCenter(event.latLng)
+                        center = event.latLng
+                        clearCircle()
+                        drawCircle()
+                        clearResults(markers)
+                        
+                        request = {
+                            location : event.latLng,
+                            radius : 8047,
+                            types : [types]
+                        }
+                
+                    service.nearbySearch(request, callback)
+                    })
+                    
+                    $('#filter').change(function(){
+                        types = $('#filter').val()
+                    })
+                    
+                    $('#subQuery').click(function(){
+                        $('#query').val()
+                    })
+                    
+                    //ADD TO ITINERARY
+                    //if($('#add')){
+                    //    $('#add').click(function(){
+                            //CODE
+                    //    })
+                    //}
+                    
+                }
+                           
+
+            
+                function callback(results, status){
+                    if(status == google.maps.places.PlacesServiceStatus.OK){
+                        for(var i = 0; i < results.length; i++){
+                            markers.push(createMarker(results[i]));
+                       }
+                    }
+                }
+            
+                function createMarker(place){
+                    var placeLoc = place.geometry.location;
+                    var marker = new google.maps.Marker({
+                        map:map,
+                        animation: google.maps.Animation.DROP,
+                        position: place.geometry.location
+                    })
+            
+
+
+                    google.maps.event.addListener(marker, 'click', function(){
+                        
+                        if(place.photos){
+                            console.log(place)
+                            var placePhoto = '<img src=https://maps.googleapis.com/maps/api/place/photo?maxheight=400&maxwidth=400&photoreference=' + place.photos[0].photo_reference + '&key=AIzaSyDKkISCreDl16D3FVIDI476Jre8-qEFPv0>'
+                                infoWindow.setContent(place.name + '<br>'+ place.vicinity + '<br>' + place.rating  + '<img src="https://img.freepik.com/free-vector/start_53876-25533.jpg?size=338&ext=jpg" height="12" width="12">' + '<br>' + placePhoto + '<br>' + '<input type="button" id="add" value="Add">');
+
+                        }else{
+                            infoWindow.setContent(place.name + '<br>' + '<input type="button" id="add" value="Add">');
+                        }
+                        
+                        infoWindow.open(map, this)
+                    })
+                    return marker;
+                }
+            
+                function clearResults(markers){
+                    for (var m in markers){
+                        markers[m].setMap(null)
+                    }
+                    markers = []
+                }
+            
+                function clearCircle(){
+                    if(mapCircle){
+                        mapCircle.setMap(null)
+                        mapCircle = null;
+                    }   
+                }
+                
+                function drawCircle(){
+                    mapCircle = new google.maps.Circle({
+                    strokeColor: '#ffffff',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#dbdbdb',
+                    fillOpacity: 0.50,
+                    map: map,
+                    center: center,
+                    radius: 8047
+                    })
+                }
+            
+            
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKkISCreDl16D3FVIDI476Jre8-qEFPv0&callback=initMap&libraries=places" async defer></script>
+    
+    </body>
+</html>
