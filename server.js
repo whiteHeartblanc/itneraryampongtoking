@@ -5,7 +5,7 @@ const session= require("express-session")
 const cookieparser= require("cookie-parser")
 const app = express()
 const mongoose = require("mongoose")
-const {User} = require("./user.js")
+const {User} = require("./model/user.js")
 const hbs= require("hbs")
 
 
@@ -114,11 +114,14 @@ app.post("/login", urlencoder, function(req, res){
 app.post("/register", urlencoder, function(req,res){
          let username = req.body.un
          let password = req.body.pw
+         let email = req.body.email
+        
          
          let user = new User({
         
                username : username,
-         password : password
+         password : password,
+             email : email
    
          
          

@@ -1,16 +1,69 @@
 <html>
 
     <head>
+       <script src="https://code.jquery.com/jquery-3.4.1.js"> </script>
+        <script>
+            
+     
+      
+         $(document).ready(function(){
+       $("#confirmsubmit").click(function(){
+                                 
+                                 
+         if($("#password").val() == $("#confirm").val() ){
+             
+             if( $("#username").val()){
+                 console.log($("#email").val())
+                if($("#email").val()){
+                    
+                      alert("Sucessfully created account")
+               $("#signup").submit()
+                }
+                 else{
+                     alert('Please enter an email')
+                 }
+             
+                 }
+             else{
+                 alert("Pleas enter Username")
+             }
+             
+               
+           
+                           }
+                                 
+           else{
+               alert("Password does not match")
+               
+           }
+                           
+                                 
+                                 })
+         
+             
+           
+       
+       
+        
+    })
+        
+ 
+
+        </script>
     
     </head>
 
 
     <body>
     <h1> Sign Up</h1>
-       <form action="register" method="post">
-    username <input type="text" name="un"><br>
-    password <input type="password" name="pw"><br>
-    <input type="submit" value="sign up">  
+       <form action="register" method="post" id="signup">
+    Username <input type="text" name="un" id="username"><br>
+    Email <input  type="text" name="email" id="email"> <br>
+        
+    Pssword <input type="password" name="pw" id="password"><br>
+    Confirm password <input type="password" name="confirm" id="confirm"><br>
+           
+    <input type="button" value="sign up"  id="confirmsubmit">  
            
         </form>
    
