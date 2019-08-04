@@ -65,7 +65,7 @@ app.get("/", function(req,res){
         
     
       res.render("home.hbs",{
-         
+        username: req.session.username
       })
   }
     else{
