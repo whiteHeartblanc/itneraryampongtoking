@@ -1,6 +1,14 @@
 <html>
 
     <head>
+       <script src="https://code.jquery.com/jquery-3.4.1.js"> </script>
+        <script>
+        $(document).ready(function(){ 
+        $('[type="date"].min-today').prop('min', function(){
+        return new Date().toJSON().split('T')[0];
+    });
+        })
+        </script>
      
     
     </head>
@@ -9,8 +17,9 @@
     <body>
     <h1> Create</h1>
        <form action="createlist" method="post">
-    List Name <input type="text" name="listname"><br>
-           Date <input type="date" name="date"><br>
+    List Name: <input type="text" name="listname"><br>
+          
+ Date: <input class="min-today" id="min" type="date" placeholder="YYYY-MM-DD" data-date-split-input="true" name="date"/><br>
     <input type="submit" value="Create">  
            
         </form>
