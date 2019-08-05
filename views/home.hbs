@@ -32,9 +32,10 @@
                 font-size: 20px;
             }
         </style>
-        <script src="../jquery.js"></script>
+       <script src="https://code.jquery.com/jquery-3.4.1.js"> </script>
     </head>
     <body>
+           <h1> Hello! {{username}}</h1>
         <form action="search" id="search">
             <input type="text" name="query" id="query" placeholder="Search for places">
             <input id="subQuery" type="submit" name="subQuery" value="Search">
@@ -55,6 +56,19 @@
                                    STEP 3: CLICK THE PIN OF THE MAP TO ADD THE PLACE</div>
             <button id="butt" onclick="off()">Understood</button>
         </div>
+        
+         <form action="Logout">
+        <input type="submit" value="LogOut">
+        </form>
+        
+             
+            <form action="viewlist"  method="post">
+                <input type="submit" value="View Lists">
+                </form>
+        
+        <form action="createlistpage">
+          <input type="submit" value="Create New List">
+        </form>
         <div id="map"></div>
         <script>
             var map
