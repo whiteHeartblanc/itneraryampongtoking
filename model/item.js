@@ -7,8 +7,8 @@ var Item = mongoose.model("item", {
     order: int,
     start: String,
     end: String,
-    total: int
-      list :[{type : Schema.Types.ObjectId, ref: 'lists'}]
+    
+    list :[{type : Schema.Types.ObjectId, ref: 'lists'}]
     
    
     

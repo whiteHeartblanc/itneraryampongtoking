@@ -30,42 +30,19 @@ const urlencoder = bodyparser.urlencoded({
 app.use(cookieparser())
 
 app.use(express.static(__dirname+"/public"))
-app.use(session({
-    //close server delete all sessions
-    secret : "secret name",
-    
-    // saves
-    resave : true,
-    // false in igocnigito
-    saveUninitialized : true,
-    // name of cookie
-    name: "cookie monster",
-    cookie : {
-       
-        maxAge: 1000*60*60*24*365*2
-      
-        
-    }
-    
-}))
 
 
 
 app.get("/", function(req,res){
-    let fontsize = 12
-      
-        if(req.cookies.elmo){
-            fontsize= req.cookies.elmo
-            
-        }
+
   
     
-    if(req.session.username){
+    if(req.cookies.loggeduser){
         
         
     
       res.render("home.hbs",{
-        username: req.session.username
+        username: req.cookies.loggeduser
       })
   }
     else{
@@ -100,7 +77,16 @@ app.post("/login", urlencoder, function(req, res){
        }
        else{
            
-           req.session.username = doc.username
+        //   req.session.username = doc.username
+               let fs= username
+   
+    res.cookie("loggeduser", fs,{
+        maxAge : 1000*60*60*24*31
+        // 1 month
+        
+        
+    })
+
            res.redirect("/")
        }
        
@@ -130,8 +116,15 @@ app.post("/register", urlencoder, function(req,res){
          user.save().then((doc)=>{
              
              console.log(doc)
-             req.session.username=doc.username
-             
+            // req.session.username=doc.username
+              let fs= username
+   
+    res.cookie("loggeduser", fs,{
+          maxAge : 1000*60*60*24*31
+        // 1 month
+        
+        
+    })
              res.redirect("/")
              
              
@@ -149,17 +142,65 @@ app.post("/register", urlencoder, function(req,res){
 app.get("/Logout", function(req,res){
     
     
-    req.session.username = null
+    req.cookie.loggeduser = null
     
     res.redirect("/")
 })
-app.post("/add", urlencoder, (req,res)=>{
+
+app.post("/createlist", urlencoder, function(req,res){
+    
+    
+})
+
+app.post("/deletelist", urlencoder, function(req,res){
+})
+
+app.post("/selectist", urlencoder, function(req,res){
+})
+
+
+
+app.post("/viewlist", urlencoder, function(req,res){
+    
+    
+    
+       User.find({
+           
+        
+    }, (err,docs)=>{
+        // callback function
+        if(err){
+            res.send(err)
+        }else{
+            //render all lists
+           // res.render("admin.hbs", {
+                //users:docs
+            })
+        }
+        
+    })
+
+app.post("/deletefromlist", urlencoder, function(req,res){
+})
+
+    
+    app.post("/edititemtime", urlencoder, function(req,res){
+})
+
+
+app.post("/addtolist", urlencoder, (req,res)=>{
      console.log("POST /add")
-    let username = req.body.un 
-    let password = req.body.pw 
+    
+    
+    
+    let item = req.body.item 
+    let type = req.body.type 
+    let start = req.body.starttime
+    let end= req.body.endtime
+    let idlist= 
     // redirect isntad of res.send admin hbs....
     let user = new User({
-        username, password
+        item, type, start, end, idlist
     })
     
     
