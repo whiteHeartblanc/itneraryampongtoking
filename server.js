@@ -71,9 +71,10 @@ app.post("/login", urlencoder, function(req, res){
    }, (err, doc)=>{
        
        if(err){
-           res.send(err)
+           res.send("Something went wrong")
        }else if(!doc){
-           res.send("User does not exist")
+          //alert("User does not exist")
+          res.sendFile(__dirname+"/public/usernotexist.html")
        }
        else{
            
@@ -133,7 +134,7 @@ app.post("/register", urlencoder, function(req,res){
              
          }, (err)=>{
             
-             res.send(err)
+             res.send("Something went wrong")
              
              
          })
@@ -178,7 +179,7 @@ app.post("/viewlist", urlencoder, function(req,res){
     }, (err,docs)=>{
         // callback function
         if(err){
-            res.send(err)
+            res.send("Something went Wrong")
         }else{
             
             
