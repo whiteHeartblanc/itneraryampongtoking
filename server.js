@@ -100,6 +100,7 @@ app.post("/login", urlencoder, function(req, res){
   
 })
 
+
 app.post("/register", urlencoder, function(req,res){
          let username = req.body.un
          let password = req.body.pw
@@ -230,6 +231,12 @@ app.post("/addtolist", urlencoder, (req,res)=>{
    //     res.send(err)
         
    // })
+    
+})
+app.post("/search", urlencoder, function(req,res){
+    
+    
+    
     
 })
 

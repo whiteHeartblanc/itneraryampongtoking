@@ -62,7 +62,7 @@
     </head>
     <body>
            <h1> Hello! {{username}}</h1>
-        <form action="search" id="search">
+        <form action="search" id="search" method="POST">
             <input type="text" name="query" id="query" placeholder="Search for places">
             <input id="subQuery" type="submit" name="subQuery" value="Search">
             <select name="filter" id="filter">
@@ -81,9 +81,7 @@
             <button id="butt" onclick="off()">Understood</button>
         </div>
         
-         <form action="Logout">
-        <input type="submit" value="Log Out">
-        </form>
+        
         
              
             <form action="viewlist"  method="post">
@@ -92,6 +90,10 @@
         
         <form action="createlistpage">
           <input type="submit" value="Create New List">
+        </form>
+        
+         <form action="Logout">
+        <input type="submit" value="Log Out">
         </form>
         
         <br>
