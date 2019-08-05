@@ -4,24 +4,50 @@
         <meta charset="UTF-8">
         <title>Google Maps</title>
         <style>
+            body{
+                background-image:url(map.jpg)
+            }
+            input[type=submit]{
+                background-color:#9a9a9a;
+                border-radius:28px;
+                font-family:Verdana;
+            	font-size:12px;
+                color:white;
+            }
+            input[type=submit]:hover{
+                background-color:#bab9b9;
+            }
+            body{
+                font-family: Helvetica;
+            }
             #map{
                 height:400px;
                 width:100%;
             }
             #butt{
-
-                background-color:#c7c7c7; 
-                border:1px solid #525252;
-                border-radius:28px; 
-                height: 40px; 
-                width: 150px; 
+            	-moz-box-shadow: 0px 0px 0px 0px #9fb4f2;
+            	-webkit-box-shadow: 0px 0px 0px 0px #9fb4f2;
+            	box-shadow: 0px 0px 0px 0px #9fb4f2;
+            	background-color:#7892c2;
+            	-moz-border-radius:28px;
+            	-webkit-border-radius:28px;
+            	border-radius:28px;
+            	border:1px solid #4e6096;
+            	cursor:pointer;
+            	color:#ffffff;
+            	font-family:Verdana;
+            	font-size:17px;
+            	font-weight:bold;
+            	padding:15px 54px;
+            	text-decoration:none;
+            	text-shadow:0px 1px 0px #283966;
                 position: absolute; 
                 left: 50%; 
                 top: 50%; 
                 transform: translate(-50%, -50%);
             }
-            #butt:hover{
-                background-color:#cfcfcf;               
+            #butt:hover {
+            	background-color:#476e9e;
             }
             #instructions{
                 background-color: rgb(255, 255, 255, 50%);
@@ -45,11 +71,9 @@
                 <option value="airport">Airports</option>
                 <option value="shopping_mall">Shopping Malls</option>
             </select>
-            
-            
-            
-            
         </form>
+        <br>
+        
         <div id="overlay" style="position:fixed;display:none;width:100%;height:100%;top:0;left:0;right:0;bottom:0;background-color: rgba(0,0,0,0.5);z-index:2;cursor:pointer;">
             <div id="instructions">STEP 1: CHOOSE A FILTER <br>
                                    STEP 2: RIGHT CLICK THE MAP <br>
@@ -58,7 +82,7 @@
         </div>
         
          <form action="Logout">
-        <input type="submit" value="LogOut">
+        <input type="submit" value="Log Out">
         </form>
         
              
@@ -69,6 +93,8 @@
         <form action="createlistpage">
           <input type="submit" value="Create New List">
         </form>
+        
+        <br>
         <div id="map"></div>
         <script>
             var map

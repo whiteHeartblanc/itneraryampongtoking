@@ -15,6 +15,32 @@
     })
     
     </script>
+    
+        <style>
+            body{
+                background-image:url(map.jpg)
+            }
+            input[type=submit]{
+                background-color:#9a9a9a;
+                border-radius:28px;
+                font-family:Verdana;
+            	font-size:12px;
+                color:white;
+            }
+            input[type=submit]:hover{
+                background-color:#bab9b9;
+            }
+            input#create{
+                background-color:#535353;
+                border-radius:28px;
+                font-family:Verdana;
+            	font-size:12px;
+                color:white;
+            }
+            input[type=submit]#create:hover{
+                background-color:#bab9b9;
+            }
+        </style>
     </head>
 <body>
    
@@ -33,7 +59,7 @@
     </table>
      <form action="createlistpage">
      
-        <input type="submit" value="create"> <br>
+        <input id="create" type="submit" value="Create"> <br>
         
     </form>
      <!-- allow td to be clicked 
