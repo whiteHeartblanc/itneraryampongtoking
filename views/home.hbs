@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-       <script src="https://code.jquery.com/jquery-3.4.1.js"> </script>
         <meta charset="UTF-8">
         <title>Google Maps</title>
         <style>
@@ -9,11 +8,33 @@
                 height:400px;
                 width:100%;
             }
+            #butt{
+
+                background-color:#c7c7c7; 
+                border:1px solid #525252;
+                border-radius:28px; 
+                height: 40px; 
+                width: 150px; 
+                position: absolute; 
+                left: 50%; 
+                top: 50%; 
+                transform: translate(-50%, -50%);
+            }
+            #butt:hover{
+                background-color:#cfcfcf;               
+            }
+            #instructions{
+                background-color: rgb(255, 255, 255, 50%);
+                position: absolute; 
+                left: 30%; 
+                top: 1.5%;
+                font-family: helvetica;
+                font-size: 20px;
+            }
         </style>
-       <!-- <script src="../jquery.js"></script> -->
+        <script src="../jquery.js"></script>
     </head>
     <body>
-        <h1> Hello! {{username}}</h1>
         <form action="search" id="search">
             <input type="text" name="query" id="query" placeholder="Search for places">
             <input id="subQuery" type="submit" name="subQuery" value="Search">
@@ -26,19 +47,14 @@
             
             
             
+            
         </form>
-        <form action="Logout">
-        <input type="submit" value="LogOut">
-        </form>
-        
-             
-            <form action="viewlist"  method="post">
-                <input type="submit" value="View Lists">
-                </form>
-        
-        <form action="createlistpage">
-          <input type="submit" value="Create New List">
-        </form>
+        <div id="overlay" style="position:fixed;display:none;width:100%;height:100%;top:0;left:0;right:0;bottom:0;background-color: rgba(0,0,0,0.5);z-index:2;cursor:pointer;">
+            <div id="instructions">STEP 1: CHOOSE A FILTER <br>
+                                   STEP 2: RIGHT CLICK THE MAP <br>
+                                   STEP 3: CLICK THE PIN OF THE MAP TO ADD THE PLACE</div>
+            <button id="butt" onclick="off()">Understood</button>
+        </div>
         <div id="map"></div>
         <script>
             var map
@@ -55,6 +71,8 @@
             
             
                 function initMap(){
+                    console.log($('#filter').offset())
+                    on();
                     center = new google.maps.LatLng(14.5647, 120.9932)
                     var options = {
                         zoom:13,
@@ -172,7 +190,13 @@
                     radius: 8047
                     })
                 }
-       
+            function on() {
+                document.getElementById("overlay").style.display = "block";
+            }
+
+            function off() {
+            document.getElementById("overlay").style.display = "none";
+            }
             
             
         </script>
