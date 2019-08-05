@@ -36,7 +36,7 @@ app.use(express.static(__dirname+"/public"))
 app.get("/", function(req,res){
 
   
-    
+   // console.log(req.cookies.loggeduser)
     if(req.cookies.loggeduser){
         
         
@@ -86,6 +86,8 @@ app.post("/login", urlencoder, function(req, res){
         
         
     })
+             
+    
 
            res.redirect("/")
        }
@@ -141,8 +143,8 @@ app.post("/register", urlencoder, function(req,res){
 
 app.get("/Logout", function(req,res){
     
-    
-   req.cookies.loggeduser = null
+    console.log(req.cookies.loggeduser)
+  res.clearCookie("loggeduser");
     
     res.redirect("/")
 })
