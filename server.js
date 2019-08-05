@@ -142,13 +142,19 @@ app.post("/register", urlencoder, function(req,res){
 app.get("/Logout", function(req,res){
     
     
-    req.cookie.loggeduser = null
+   req.cookies.loggeduser = null
     
     res.redirect("/")
 })
 
 app.post("/createlist", urlencoder, function(req,res){
     
+    
+})
+
+app.get("/createlistpage",  function(req,res){
+    
+       res.sendFile(__dirname+"/public/createlist.html")
     
 })
 
@@ -172,13 +178,19 @@ app.post("/viewlist", urlencoder, function(req,res){
         if(err){
             res.send(err)
         }else{
+            
+            
             //render all lists
-           // res.render("admin.hbs", {
-                //users:docs
+         res.render("viewlist.hbs", {
+                users:docs
             })
         }
+    
+
         
     })
+})
+    
 
 app.post("/deletefromlist", urlencoder, function(req,res){
 })
@@ -186,6 +198,10 @@ app.post("/deletefromlist", urlencoder, function(req,res){
     
     app.post("/edititemtime", urlencoder, function(req,res){
 })
+    
+    app.post("/editorder", urlencoder, function(req,res){
+        
+    })
 
 
 app.post("/addtolist", urlencoder, (req,res)=>{
@@ -193,24 +209,30 @@ app.post("/addtolist", urlencoder, (req,res)=>{
     
     
     
-    let item = req.body.item 
-    let type = req.body.type 
-    let start = req.body.starttime
-    let end= req.body.endtime
-    let idlist= 
+ //   let item = req.body.item 
+  //  let type = req.body.type 
+   // let start = req.body.starttime
+ ///   let end= req.body.endtime
+  //  let idlist= 
     // redirect isntad of res.send admin hbs....
-    let user = new User({
-        item, type, start, end, idlist
-    })
+   // let user = new User({
+   //     item, type, start, end, idlist
+ //   })
     
     
-    user.save().then((doc)=>{
-       res.redirect("/users")
+   // user.save().then((doc)=>{
+    //   res.redirect("/users")
         
-    },  (err)=> {
-        res.send(err)
+  //  },  (err)=> {
+   //     res.send(err)
         
-    })
+   // })
+    
+})
+
+app.get("/back", function(req,res){
+    
+    res.redirect("/")
     
 })
 

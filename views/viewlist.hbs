@@ -1,0 +1,59 @@
+<html>
+<head>
+    
+    <script src="jquery.js">
+    </script>
+    
+    <script>
+    $(document).ready(function(){
+        $("td").click(function(){
+            let id= this.id
+            $("#id").val(id)
+            $("#formid").submit()
+        })
+        
+        
+        
+    })
+    
+    </script>
+    </head>
+<body>
+   
+    <table>
+        <tbody>
+           
+    {{#each list}}
+            <tr>
+                <!-- td has _id-->
+      <td id="{{_id}}"> {{listname}}</td>
+  <td id="{{_id}}"> {{date}}</td>
+                    
+        </tr>
+        {{/each}}
+    </tbody>
+    </table>
+     <form action="createlistpage">
+     
+        <input type="submit" value="create"> <br>
+        
+    </form>
+     <!-- allow td to be clicked 
+using script when clicked id from user it will submit-->
+    <form action="selectlist" id="formid">
+    <input type="hidden" name="id" id="id">
+    </form>
+    
+    
+    <form action="back">
+    <input type="submit" value="Back">
+    </form>
+    
+    </body>
+
+
+
+
+
+
+</html>
