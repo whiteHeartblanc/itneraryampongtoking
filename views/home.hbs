@@ -3,9 +3,10 @@
     <head>
         <meta charset="UTF-8">
         <title>Google Maps</title>
+         <!--background-image:url(map.jpg)  #ffdab3-->
         <style>
             body{
-                background-image:url(map.jpg)
+               background-color:#fdd0a0;
             }
             input[type=submit]{
                 background-color:#9a9a9a;
@@ -21,7 +22,7 @@
                 font-family: Helvetica;
             }
             #map{
-                height:400px;
+                height:600px;
                 width:100%;
             }
             #butt{
@@ -61,17 +62,15 @@
        <script src="https://code.jquery.com/jquery-3.4.1.js"> </script>
     </head>
     <body>
-           <h1> Hello! {{username}}</h1>
-        <form action="search" id="search" method="POST">
-            <input type="text" name="query" id="query" placeholder="Search for places">
-            <input id="subQuery" type="submit" name="subQuery" value="Search">
-            <select name="filter" id="filter">
-                <option value="museum">Museums</option>
-                <option value="park">Parks</option>
-                <option value="airport">Airports</option>
-                <option value="shopping_mall">Shopping Malls</option>
-            </select>
-        </form>
+        <h3> Hello! {{username}}</h3>
+        <input type="text" name="query" id="query" placeholder="Search for places">
+        <input id="subQuery" type="button" name="subQuery" value="Search">
+        <select name="filter" id="filter">
+            <option value="museum">Museums</option>
+            <option value="park">Parks</option>
+            <option value="airport">Airports</option>
+            <option value="shopping_mall">Shopping Malls</option>
+        </select>
         <br>
         
         <div id="overlay" style="position:fixed;display:none;width:100%;height:100%;top:0;left:0;right:0;bottom:0;background-color: rgba(0,0,0,0.5);z-index:2;cursor:pointer;">
@@ -84,20 +83,18 @@
         
         
              
-            <form action="viewlist"  method="post">
-                <input type="submit" value="View Lists">
-                </form>
-        
-        <form action="createlistpage">
-          <input type="submit" value="Create New List">
-        </form>
-        
-         <form action="Logout">
-        <input type="submit" value="Log Out">
-        </form>
-        
+
         <br>
         <div id="map"></div>
+        
+        <form action="viewlist"  method="post">
+            <input type="submit" value="View Lists">
+        </form>
+        
+        <a href="createlistpage"><input type="submit" value="Create New List"></a>
+        
+        <a href="Logout"><input type="submit" value="Log Out"></a>
+        
         <script>
             var map
             var infoWindow
@@ -106,6 +103,7 @@
             
             var center
             var request
+            var detRequest
             var service
             var types
             var markers = [];
@@ -150,15 +148,37 @@
                             types : [types]
                         }
                 
-                    service.nearbySearch(request, callback)
-                    })
-                    
-                    $('#filter').change(function(){
-                        types = $('#filter').val()
+                        service.nearbySearch(request, callback)
                     })
                     
                     $('#subQuery').click(function(){
-                        $('#query').val()
+                        
+                        request = {
+                            query : $('#query').val(),
+                            fields : ['place_id']
+                        }
+                        
+                        clearResults(markers)
+                        console.log(request)
+                        service.findPlaceFromQuery(request, function(results, status){
+                            if(status == google.maps.places.PlacesServiceStatus.OK){
+                                for(var i = 0; i < results.length; i++){
+                                    console.log(results[i])
+                                    detRequest = {
+                                        placeId: results[i].place_id,
+                                        fields: ['geometry', 'icon', 'name', 'rating', 'photo', 'place_id', 'plus_code', 'type', 'url', 'utc_offset', 'vicinity']
+                                    }
+                                }
+                            }
+                            console.log(detRequest)
+                            getdetails();
+                        })
+                    })
+                    
+                    
+                    
+                    $('#filter').change(function(){
+                        types = $('#filter').val()
                     })
                     
                     //ADD TO ITINERARY
@@ -175,11 +195,23 @@
                 function callback(results, status){
                     if(status == google.maps.places.PlacesServiceStatus.OK){
                         for(var i = 0; i < results.length; i++){
+                            console.log(results[i])
                             markers.push(createMarker(results[i]));
                        }
                     }
                 }
+                
+                function callback2(place, status){
+                    console.log(place)
+                    if(status == google.maps.places.PlacesServiceStatus.OK){
+                        markers.push(createMarker(place));
+                        map.setCenter(place.geometry.location);
+                    }
+                }
+                
+
             
+                
                 function createMarker(place){
                     var placeLoc = place.geometry.location;
                     var marker = new google.maps.Marker({
@@ -192,14 +224,8 @@
 
                     google.maps.event.addListener(marker, 'click', function(){
                         
-                        if(place.photos){
-                            console.log(place)
-                            var placePhoto = '<img src=https://maps.googleapis.com/maps/api/place/photo?maxheight=400&maxwidth=400&photoreference=' + place.photos[0].photo_reference + '&key=AIzaSyDKkISCreDl16D3FVIDI476Jre8-qEFPv0>'
-                                infoWindow.setContent(place.name + '<br>'+ place.vicinity + '<br>' + place.rating  + '<img src="https://img.freepik.com/free-vector/start_53876-25533.jpg?size=338&ext=jpg" height="12" width="12">' + '<br>' + placePhoto + '<br>' + '<input type="button" id="add" value="Add">');
-
-                        }else{
-                            infoWindow.setContent(place.name + '<br>' + '<input type="button" id="add" value="Add">');
-                        }
+                        var placePhoto = '<img src=https://maps.googleapis.com/maps/api/place/photo?maxheight=&maxwidth=400&photoreference=' + place.photos[0].photoreference + '&key=AIzaSyDKkISCreDl16D3FVIDI476Jre8-qEFPv0>'
+                        infoWindow.setContent(place.name + '<br>'+ place.vicinity + '<br>' + place.rating  + '<img src="https://img.freepik.com/free-vector/start_53876-25533.jpg?size=338&ext=jpg" height="12" width="12">' + '<br>' + placePhoto + '<br>' + '<input type="button" id="add" value="Add">');
                         
                         infoWindow.open(map, this)
                     })
@@ -239,6 +265,10 @@
             function off() {
             document.getElementById("overlay").style.display = "none";
             }
+            
+            function getdetails(){
+                        service.getDetails(detRequest, callback2)
+                    }
             
             
         </script>

@@ -6,6 +6,8 @@ const cookieparser= require("cookie-parser")
 const app = express()
 const mongoose = require("mongoose")
 const {User} = require("./model/user.js")
+const {List} = require("./model/list.js")
+const {Item} = require("./model/item.js")
 const hbs= require("hbs")
 
 
@@ -39,7 +41,7 @@ app.get("/", function(req,res){
    // console.log(req.cookies.loggeduser)
     if(req.cookies.loggeduser){
         
-        
+        console.log(req.cookies.UserId)
     
       res.render("home.hbs",{
         username: req.cookies.loggeduser
@@ -80,14 +82,21 @@ app.post("/login", urlencoder, function(req, res){
            
         //   req.session.username = doc.username
                let fs= username
-   
+               let fs2 = doc._id
     res.cookie("loggeduser", fs,{
         maxAge : 1000*60*60*24*31
         // 1 month
         
         
     })
-             
+           res.cookie("UserId", fs2, {
+                maxAge : 1000*60*60*24*31
+               
+               
+           })
+          
+           
+   
     
 
            res.redirect("/")
@@ -122,13 +131,20 @@ app.post("/register", urlencoder, function(req,res){
              console.log(doc)
             // req.session.username=doc.username
               let fs= username
-   
+              let fs2 = doc._id
+               
     res.cookie("loggeduser", fs,{
           maxAge : 1000*60*60*24*31
         // 1 month
         
         
     })
+             res.cookie("UserId", fs2, {
+                maxAge : 1000*60*60*24*31
+               
+               
+           })   
+  
              res.redirect("/")
              
              
@@ -147,12 +163,59 @@ app.get("/Logout", function(req,res){
     
     console.log(req.cookies.loggeduser)
   res.clearCookie("loggeduser");
-    
+      res.clearCookie("UserId");
     res.redirect("/")
 })
 
 app.post("/createlist", urlencoder, function(req,res){
-    
+
+     let  listname= req.body.listname
+    let date = req.body.date
+   
+      let list = new List({
+        
+               name : listname,
+               date : date 
+         
+         
+         
+         })
+         list.save().then((doc)=>{
+             
+             console.log(doc)
+            // req.session.username=doc.username
+             
+  
+             
+             
+             
+             
+         }, (err)=>{
+            
+             res.send("Something went wrong")
+             
+             
+         })
+    User.update  ({
+       _id : req.cookies.UserId
+    },{
+        list : list
+        
+    },(err, doc)=>{
+        
+        
+       
+        
+        if(err){
+            res.send("something went wrong")
+        }else{
+          
+                res.redirect("/")
+        }
+        
+        
+    })
+
     
 })
 
@@ -233,6 +296,7 @@ app.post("/addtolist", urlencoder, (req,res)=>{
    // })
     
 })
+
 app.post("/search", urlencoder, function(req,res){
     
     

@@ -6,7 +6,7 @@ var User = mongoose.model("user", {
     password : String, 
     email : String,
 
-    
+    list :[{type : Schema.Types.ObjectId, ref: 'list'}]
     
     
 })
