@@ -62,7 +62,11 @@
        <script src="https://code.jquery.com/jquery-3.4.1.js"> </script>
     </head>
     <body>
+
         <h3> Hello! {{username}}</h3>
+
+       
+
         <input type="text" name="query" id="query" placeholder="Search for places">
         <input id="subQuery" type="button" name="subQuery" value="Search">
         <select name="filter" id="filter">
@@ -71,6 +75,7 @@
             <option value="airport">Airports</option>
             <option value="shopping_mall">Shopping Malls</option>
         </select>
+
         <br>
         
         <div id="overlay" style="position:fixed;display:none;width:100%;height:100%;top:0;left:0;right:0;bottom:0;background-color: rgba(0,0,0,0.5);z-index:2;cursor:pointer;">
@@ -171,11 +176,13 @@
                                 }
                             }
                             console.log(detRequest)
+
                             getdetails();
                         })
                     })
                     
                     
+
                     
                     $('#filter').change(function(){
                         types = $('#filter').val()
