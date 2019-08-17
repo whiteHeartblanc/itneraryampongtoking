@@ -199,7 +199,7 @@ app.post("/createlist", urlencoder, function(req,res){
     User.update  ({
        _id : req.cookies.UserId
     },{
-        list : list
+         $push: { list:list  } 
         
     },(err, doc)=>{
         
@@ -235,12 +235,10 @@ app.post("/selectist", urlencoder, function(req,res){
 
 app.post("/viewlist", urlencoder, function(req,res){
     
-    
-    
-       User.find({
-           
-        
-    }, (err,docs)=>{
+    console.log(req.cookies.UserId)
+       User.findOne({
+           _id: req.cookies.UserId
+    }, (err,doc)=>{
         // callback function
         if(err){
             res.send("Something went Wrong")
@@ -248,9 +246,10 @@ app.post("/viewlist", urlencoder, function(req,res){
             
             
             //render all lists
-         res.render("viewlist.hbs", {
-                users:docs
-            })
+        //let userid= doc.list
+            console.log(doc.list)
+            let listids= doc.list
+            console.log(listids[1])
         }
     
 
