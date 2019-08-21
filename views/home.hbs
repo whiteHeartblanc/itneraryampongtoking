@@ -3,12 +3,16 @@
     <head>
         <meta charset="UTF-8">
         <title>Google Maps</title>
+ 
          <!--background-image:url(map.jpg)  #ffdab3-->
         <style>
-            body{
-               background-image:url(plain.jpeg)
+            form{
+                margin: 2px 0 2px 0
             }
-            input[type=submit]{
+            body{
+                background-image: linear-gradient(to bottom right, #97bfff, #fffeda);
+            }
+            input[type=submit],.saveplaces{
 	            display: inline-block;
 	            background-color: #f5f5f5;
 	            background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
@@ -33,7 +37,7 @@
 	            padding: 0 8px;
 	            text-decoration: none;
             }
-            input[type=submit]:hover{
+            input[type=submit]:hover,.saveplaces:hover{
             	background-color: #F8F8F8;
             	background-image: -webkit-linear-gradient(top,#f8f8f8,#f1f1f1);
             	background-image: -moz-linear-gradient(top,#f8f8f8,#f1f1f1);
@@ -99,23 +103,25 @@
                 position: absolute;
                 left: 90%;
                 margin: 0 0 6px 0;
-                background-color:#272727;
-                font-family:Verdana;
-            	font-size:12px;
-                color:white;
-	            background-image: -webkit-linear-gradient(top,#272727,#838383);
-            	background-image: -moz-linear-gradient(top,#272727,#838383);
-             	background-image: -ms-linear-gradient(top,#272727,#838383);
-             	background-image: -o-linear-gradient(top,#272727,#838383);
-	            background-image: linear-gradient(top,#272727,#838383);
+                font-size:12px;
+               background-color: #D14836;
+	           background-image: -webkit-linear-gradient(top,#dd4b39,#d14836);
+	           background-image: -moz-linear-gradient(top,#dd4b39,#d14836);
+	           background-image: -ms-linear-gradient(top,#dd4b39,#d14836);
+	           background-image: -o-linear-gradient(top,#dd4b39,#d14836);
+	           background-image: linear-gradient(top,#dd4b39,#d14836);
+	           
+	           border: 1px solid transparent;
+	           color: white;
+	           text-shadow: 0 1px rgba(0, 0, 0, 0.1);
             }
             #subLogout:hover{
-                background-color:#838383;
-             	background-image: -webkit-linear-gradient(top,#6d6d6d,#838383);
-            	background-image: -moz-linear-gradient(top,#6d6d6d,#838383);
-            	background-image: -ms-linear-gradient(top,#6d6d6d,#838383);
-            	background-image: -o-linear-gradient(top,#6d6d6d,#838383);
-             	background-image: linear-gradient(top,#6d6d6d,#838383);
+               background-color: #C53727;
+	           background-image: -webkit-linear-gradient(top,#dd4b39,#c53727);
+	           background-image: -moz-linear-gradient(top,#dd4b39,#c53727);
+	           background-image: -ms-linear-gradient(top,#dd4b39,#c53727);
+	           background-image: -o-linear-gradient(top,#dd4b39,#c53727);
+	           background-image: linear-gradient(top,#dd4b39,#c53727);	
             }
             #subQuery{
                 background-color: #4D90FE;
@@ -158,9 +164,12 @@
         <input id="subQuery" type="button" name="subQuery" value="Search">
         <select name="filter" id="filter">
             <option value="museum">Museums</option>
+            <option value="restaurant">Restaurants</option>
+            <option value="zoo">Zoos</option>
             <option value="park">Parks</option>
             <option value="airport">Airports</option>
             <option value="shopping_mall">Shopping Malls</option>
+            
         </select>
 
         <br>
@@ -180,12 +189,19 @@
         <div id="map"></div>
         
         <form action="viewlist" >
-            <input type="submit" value="View Lists">
-        </form> <br>
-        <div id="tempTable"></div>
-        <a href="createlistpage"><input type="submit" value="Create New List"></a>
+            <input type="submit" value="View Itinerary">
+        </form>
+        <a href="createlistpage"><input type="submit" value="Create New Itinerary"></a>
 
         <h2> {{list}}   {{date}}</h2>
+         <form action="savelist" method="POST" id="save">
+           
+            <input type="hidden" id="splaces" name="places">
+        </form>
+        <div id="tempTable"></div>
+       
+        <button class="saveplaces" >Save</button>
+        
         <script>
             var map
             var curPlace
@@ -193,7 +209,10 @@
             var placeType
             var autocomplete
             
+            var url
+            var qbool
             var center
+            var icon
             var request
             var detRequest
             var service
@@ -201,7 +220,7 @@
             var markers = [];
             var mapCircle
             var savedPlaces = [];
-            
+          
             
                 function initMap(){
                     console.log($('#filter').offset())
@@ -229,6 +248,22 @@
                     service = new google.maps.places.PlacesService(map);
                     
                     google.maps.event.addListener(map, 'rightclick', function(event){
+                                            
+                        
+                        if(types == "museum"){
+                            url = "https://maps.gstatic.com/mapfiles/place_api/icons/museum-71.png"
+                        } else if (types == "park"){
+                            url = "https://maps.gstatic.com/mapfiles/place_api/icons/generic_recreational-71.png"
+                        } else if (types == "airport"){
+                            url = "https://maps.gstatic.com/mapfiles/place_api/icons/airport-71.png"
+                        } else if (types == "shopping_mall"){
+                            url = "https://maps.gstatic.com/mapfiles/place_api/icons/shopping-71.png"
+                        } else if (types == "restaurant"){
+                            url = "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png"
+                        } else if (types == "zoo"){
+                            url = "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png"
+                        }
+                        
                         map.setCenter(event.latLng)
                         center = event.latLng
                         clearCircle()
@@ -310,6 +345,7 @@
                 function callback2(place, status){
                     console.log(place)
                     if(status == google.maps.places.PlacesServiceStatus.OK){
+                        qbool = true
                         markers.push(createMarker(place));
                         map.setCenter(place.geometry.location);
                     }
@@ -319,12 +355,26 @@
             
                 
                 function createMarker(place){
+                    if(!qbool){
+                        icon = {
+                            url: url,
+                            scaledSize: new google.maps.Size(25, 25)
+                        }
+                    }
+                    else{
+                        icon = null
+                        qbool = false
+                    }
+
+                
                     var placeLoc = place.geometry.location;
                     var marker = new google.maps.Marker({
                         map:map,
                         animation: google.maps.Animation.DROP,
+                        icon,
                         position: place.geometry.location
                     })
+                    
             
 
 
@@ -343,26 +393,55 @@
                     return marker;
                 }
             
-
+ 
                 function addPlace(){
-                    savedPlaces.push(curPlace)
-                    console.log(savedPlaces)
+                    savedPlaces.push(curPlace.name)
+                    displayArray()
+                }
+            
+                function leftOrder(num){
+                    var temp
+                    if(num != 0){
+                        temp = savedPlaces[num - 1]
+                        savedPlaces[num - 1] = savedPlaces[num];
+                        savedPlaces[num] = temp
+                    }
+                    displayArray();
+                }
+            
+                function rightOrder(num){
+                    var temp
+                    if(num != savedPlaces.length - 1){
+                        temp = savedPlaces[num + 1]
+                        savedPlaces[num + 1] = savedPlaces[num]
+                        savedPlaces[num] = temp
+                    }
+                    displayArray()
+                }
+            function deleteitem(num){
+                    savedPlaces.splice(num,1)
+                  
+                    displayArray()
+                }
+                    
+                    
+                function displayArray(){
                     var perrow = 5,
                     html = "<table><tr>";
 
   
-                    for (var i=0; i<savedPlaces .length; i++) {
-                        html += "<td>" + savedPlaces[i].name + "-></td>";
+                    for (var i=0; i<savedPlaces.length; i++) {
+                        j=i+1;
+                        html += "<td><button onclick='leftOrder("+ i +")'><</button>"+j+" "+ savedPlaces[i]+"<button onclick=deleteitem("+ i+")>x</button>" +"  "+"<button onclick='rightOrder("+ i +")'>></button></td>";
                         var next = i+1;
-                        if (next%perrow==0 && next!=savedPlaces.length) {
+                        if (next%perrow==0 && next!= savedPlaces.length) {
                             html += "</tr><tr>";
                         }
                     }
                     html += "</tr></table>";
 
-                    document.getElementById("tempTable").innerHTML = html;
+                    document.getElementById("tempTable").innerHTML = html;    
                 }
-                    
             
                 function clearResults(markers){
                     for (var m in markers){
@@ -401,9 +480,41 @@
                 function getdetails(){
                     service.getDetails(detRequest, callback2)
                 }
+                   
+        $(document).ready(function(){
+             {{#each places}}
+                     savedPlaces.push("{{this}}");
+                        console.log(savedPlaces)
+                     {{/each}}
+                     displayArray();
+                         
+            
+            
+        $("button.saveplaces").click(function(){
+            
+            $("#splaces").val(savedPlaces)
+            console.log(savedPlaces[0])
+            $("#save").submit()
+            
+        
+                
+            
+            
+             
+         
+            
+        })
+             
+                    
+          
+                 
+        })
+       
+            
             
             
         </script>
+        
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKkISCreDl16D3FVIDI476Jre8-qEFPv0&callback=initMap&libraries=places" async defer></script>
     
     </body>

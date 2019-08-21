@@ -9,6 +9,8 @@ const {User} = require("./model/user.js")
 const {List} = require("./model/list.js")
 const {Item} = require("./model/item.js")
 const hbs= require("hbs")
+const alert = require("alert-node")
+var CryptoJS = require("crypto-js");
 
  ObjectID = require('mongodb').ObjectID; 
 
@@ -17,9 +19,10 @@ const hbs= require("hbs")
 mongoose.Promise= global.Promise;
 
 
-mongoose.connect("mongodb://localhost:27017/user",{
+mongoose.connect("mongodb+srv://whiteheart:daca4444@cluster0-xvc88.azure.mongodb.net/test?retryWrites=true&w=majority",{
     useNewUrlParse: true
 })
+
 
 
 
@@ -70,36 +73,25 @@ app.get("/", function(req,res){
             date= doc.date
             console.log(doc.name)
             console.log(listname)
+            res.render("home.hbs",{
+        username: req.cookies.loggeduser,
+        list: listname,
+        date: date,
+               
+       places: itemlist
+              })
         }
            
     
-if(itemlist==null){
-    console.log("listname"+ listname)
-       res.render("home.hbs",{
-        username: req.cookies.loggeduser,
-        list: listname,
-        date: date
-              })
-}else{
-  
-  List.find({  _id : { $in : itemlist}
-    }, (err,docs)=>{
-        
-   if(err){
-            res.send("Something went Wrong")
-        }else{
-            
-     res.render("home.hbs",{
-        username: req.cookies.loggeduser,
-        list: listname,
-         items: docs,
-         date: date
-              })
-            console.log(docs);
-        }
-        
-    })  
-}
+//if(itemlist==null){
+  //  console.log("listname"+ listname)
+       //res.render("home.hbs",{
+       // username: req.cookies.loggeduser,
+        //list: listname,
+        //date: date
+          //    })
+//}
+//}
             
             
            
@@ -118,7 +110,7 @@ app.get("/registeraccount", function(req,res){
     
     
 })
-
+/*
 app.post("/login", urlencoder, function(req, res){
   
    let username= req.body.un   
@@ -126,17 +118,16 @@ app.post("/login", urlencoder, function(req, res){
    
    User.findOne({
        username : username,
-       password : password
+       password : CryptoJS.AES.decrypt(password, 'secret')
        
        
        
    }, (err, doc)=>{
        
        if(err){
-           res.send("Something went wrong")
+           res.send(err)
        }else if(!doc){
-          //alert("User does not exist")
-          res.sendFile(__dirname+"/public/usernotexist.html")
+          alert("Username/Password is incorrect");
        }
        else{
            
@@ -167,57 +158,98 @@ app.post("/login", urlencoder, function(req, res){
    
   
   
-})
-
-
-app.post("/register", urlencoder, function(req,res){
-         let username = req.body.un
-         let password = req.body.pw
-         let email = req.body.email
-        
-         
-         let user = new User({
-        
-               username : username,
-         password : password,
-             email : email
+})*/
+app.post("/login", urlencoder, function(req, res){
+  
+   let username= req.body.un   
+   let password= req.body.pw
    
-         
-         
-         
-         })
-         user.save().then((doc)=>{
-             
-             console.log(doc)
-            // req.session.username=doc.username
-              let fs= username
-              let fs2 = doc._id
-               
+   User.findOne({
+       username : username,
+      
+   }, (err, doc)=>{
+       
+       if(err){
+           res.send("Something went wrong")
+       }else if(!doc){
+          alert("Username does not exist");
+       }
+       else{
+           let passwordDb= CryptoJS.AES.decrypt(doc.password,"secret")
+           let passwordDbString= passwordDb.toString(CryptoJS.enc.Utf8)
+           if(password!= passwordDbString){
+               alert("Password is incorrect");
+           }
+           else{
+           
+        //   req.session.username = doc.username
+               let fs= username
+               let fs2 = doc._id
     res.cookie("loggeduser", fs,{
-          maxAge : 1000*60*60*24*31
+        maxAge : 1000*60*60*24*31
         // 1 month
         
         
     })
-             res.cookie("UserId", fs2, {
+           res.cookie("UserId", fs2, {
                 maxAge : 1000*60*60*24*31
                
                
-           })   
-  
-             res.redirect("/")
-             
-             
-             
-         }, (err)=>{
-            
-             res.send("Something went wrong")
-             
-             
-         })
+           })
+          
+           
    
+    
+
+           res.redirect("/")
+       }
+       }
+       
+   })
+   
+   
+  
+  
+})
+
+
+
+app.post("/register", urlencoder, function(req,res){
+    let username = req.body.un
+    let password = req.body.pw
+    let email = req.body.email
+        
          
-         })
+    let user = new User({
+        username : username,
+        password : CryptoJS.AES.encrypt(password, 'secret'),
+        email : email
+    })
+    
+    user.save().then((doc)=>{
+        console.log(doc)
+        // req.session.username=doc.username
+        let fs= username
+        let fs2 = doc._id
+        
+        res.cookie("loggeduser", fs,{
+              maxAge : 1000*60*60*24*31
+            // 1 month
+        })
+        
+        res.cookie("UserId", fs2, {
+            maxAge : 1000*60*60*24*31   
+        })   
+        
+        res.redirect("/")
+                    
+    }, (err)=>{
+            
+        res.send("Something went wrong")
+              
+    })
+         
+})
 
 app.get("/Logout", function(req,res){
     
@@ -229,14 +261,13 @@ app.get("/Logout", function(req,res){
 })
 
 app.post("/createlist", urlencoder, function(req,res){
-
+    let formatted
      let  listname= req.body.listname
-    let date = req.body.date
-   
+    let date = new Date(req.body.date)
       let list = new List({
         
                name : listname,
-               date : date 
+               date : date
          
          
          
@@ -246,6 +277,8 @@ app.post("/createlist", urlencoder, function(req,res){
              console.log(doc)
             // req.session.username=doc.username
              
+        
+   
   
              
              
@@ -270,7 +303,14 @@ app.post("/createlist", urlencoder, function(req,res){
         if(err){
             res.send("something went wrong")
         }else{
-          
+           fs3= list._id
+            console.log(doc._id)
+   // console.log(fs3+"thisoneoverhere")
+    res.cookie("curList", fs3,{
+        maxAge : 1000*60*60*24*31
+        // 1 month
+    })
+        
                 res.redirect("/")
         }
         
@@ -288,7 +328,9 @@ app.get("/createlistpage",  function(req,res){
 
 app.post("/deletelist", urlencoder, function(req,res){
     
-   
+   if (req.body.id== req.cookies.curList){
+        res.clearCookie("curList");
+   }
     List.deleteOne({
         _id: req.body.id
         
@@ -375,28 +417,13 @@ console.log("thisone"+listids.map(ObjectID))
     }) 
     
 
-  /*   List.find({  _id : { $in: User.find(req.cookies.UserId).map(function (doc) {
-      return doc._id
-    })
-                        }
-    }, (err,docs)=>{
-        
-   if(err){
-            res.send(err)
-        }else{
-            
-       // res.render("viewlist.hbs",{
-      //  list:docs
-     // })
-            console.log(docs);
-        }*/
+ 
         
     }) 
 })
     
 
-app.post("/deletefromlist", urlencoder, function(req,res){
-})
+
 app.post("/edit", urlencoder, function(req,res){
     console.log(req.body.id)
     List.findOne({
@@ -458,30 +485,36 @@ app.post("/editlist", urlencoder, function(req,res){
     })
 
 
-app.post("/addtolist", urlencoder, (req,res)=>{
-     console.log("POST /add")
+app.post("/savelist", urlencoder, (req,res)=>{
+     
+    let placesstring= req.body.places
+    let places= placesstring.split(',')
+     console.log(places)
+    console.log(places[0])
+   
+    List.updateOne({
+           _id:req.cookies.curList
+       },{ $set: { item: places }
+                 
     
-    
-    
- //   let item = req.body.item 
-  //  let type = req.body.type 
-   // let start = req.body.starttime
- ///   let end= req.body.endtime
-  //  let idlist= 
-    // redirect isntad of res.send admin hbs....
-   // let user = new User({
-   //     item, type, start, end, idlist
- //   })
-    
-    
-   // user.save().then((doc)=>{
-    //   res.redirect("/users")
+               
+       },(err, doc)=>{
         
-  //  },  (err)=> {
-   //     res.send(err)
         
-   // })
+       
+        
+        if(err){
+            res.send(err)
+        }else{
+              console.log(places[0])
+          console.log(doc)
+                res.redirect("/")
+        }
+         
+         
+         })
     
+
 })
 
 app.post("/search", urlencoder, function(req,res){
@@ -498,8 +531,8 @@ app.get("/back", function(req,res){
 })
 
 
-
-app.listen(3000, function(){
+var port = process.env.PORT || 3000
+app.listen(port, function(){
     
     console.log("live at port 3000")
 })
