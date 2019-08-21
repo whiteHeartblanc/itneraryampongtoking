@@ -182,9 +182,9 @@
         <form action="viewlist" >
             <input type="submit" value="View Lists">
         </form> <br>
-        
+        <div id="tempTable"></div>
         <a href="createlistpage"><input type="submit" value="Create New List"></a>
-        
+
         <h2> {{list}}   {{date}}</h2>
         <script>
             var map
@@ -292,7 +292,8 @@
                     $('#filter').change(function(){
                         types = $('#filter').val()
                     })
-                                
+                    
+    
                 }
                            
 
@@ -346,6 +347,20 @@
                 function addPlace(){
                     savedPlaces.push(curPlace)
                     console.log(savedPlaces)
+                    var perrow = 5,
+                    html = "<table><tr>";
+
+  
+                    for (var i=0; i<savedPlaces .length; i++) {
+                        html += "<td>" + savedPlaces[i].name + "-></td>";
+                        var next = i+1;
+                        if (next%perrow==0 && next!=savedPlaces.length) {
+                            html += "</tr><tr>";
+                        }
+                    }
+                    html += "</tr></table>";
+
+                    document.getElementById("tempTable").innerHTML = html;
                 }
                     
             
