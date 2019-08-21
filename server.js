@@ -39,6 +39,7 @@ app.get("/", function(req,res){
 
   let itemlist;
     let listname;
+    let date;
     console.log(req.cookies.curList)
    // console.log(req.cookies.loggeduser)
     if(req.cookies.loggeduser){
@@ -66,7 +67,7 @@ app.get("/", function(req,res){
             
     listname= doc.name
              itemlist= doc.item
-          
+            date= doc.date
             console.log(doc.name)
             console.log(listname)
         }
@@ -76,7 +77,8 @@ if(itemlist==null){
     console.log("listname"+ listname)
        res.render("home.hbs",{
         username: req.cookies.loggeduser,
-        list: listname
+        list: listname,
+        date: date
               })
 }else{
   
@@ -90,7 +92,8 @@ if(itemlist==null){
      res.render("home.hbs",{
         username: req.cookies.loggeduser,
         list: listname,
-         items: docs
+         items: docs,
+         date: date
               })
             console.log(docs);
         }
