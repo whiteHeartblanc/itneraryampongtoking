@@ -1,0 +1,61 @@
+<html>
+
+    <head>
+       <script src="https://code.jquery.com/jquery-3.4.1.js"> </script>
+        <script>
+        $(document).ready(function(){ 
+        $('[type="date"].min-today').prop('min', function(){
+        return new Date().toJSON().split('T')[0];
+    });
+        })
+        </script>
+    
+        <style>
+            body{
+                background-image: url(map.jpg);
+            }
+            
+            form#edit{
+                background-color: rgb(255, 255, 255, 50%);
+                font-family: Helvetica
+            }
+            input[type=submit]{
+                background-color:#9a9a9a;
+                border-radius:28px;
+                font-family:Verdana;
+            	font-size:12px;
+                color:white;
+            }
+            input[type=submit]:hover{
+                background-color:#bab9b9;
+            }
+        </style>
+    
+    </head>
+
+
+    <body>
+    
+       <form id="edit" action="editlist" method="POST">
+       <h1> Edit  {{list}}</h1>
+    List Name: <input type="text" name="listname"><br>
+          
+ Date: <input class="min-today" id="min" type="date" placeholder="YYYY-MM-DD" data-date-split-input="true" name="date"/><br>
+           <input name="id" type="hidden" value="{{id}}" >
+    <input type="submit" value="Edit">  
+           
+        </form>    
+         <form action="back">
+    <input type="submit" value="Back">
+    </form>
+   
+    </body>
+
+
+
+
+
+
+
+
+</html>

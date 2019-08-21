@@ -4,11 +4,48 @@
      <script src="https://code.jquery.com/jquery-3.4.1.js"> </script>
     <script>
     $(document).ready(function(){
-        $("td").click(function(){
-            let id= this.id
+        $("button.select").click(function(){
+            let id= $(this).attr("data-id")
             $("#id").val(id)
             $("#formid").submit()
+            console.log(id)
         })
+          $("button.edit").click(function(){
+            let id= $(this).attr("data-id")
+            $("#editid").val(id)
+            $("#edit").submit()
+            console.log(id)
+        })
+        
+         $("button.delete").click(function(){
+            let id = $(this).attr("data-id")
+            $.ajax({
+                url: "deletelist",
+                method : "POST",
+                data : {
+                    
+                    id: id
+                },
+                success : function(result){
+                    console.log(result)// check if result (doc) is ok ==1 mean successfuly
+                    if(result.ok ==1){
+                        alert("Successfully Deleted")
+                        // TODO : Remove deleted Html
+                        // delete or remove row
+                        // get data id for td
+                        
+                        $("tr[data-id='" + id + "']").remove()
+                    }else{
+                        
+                        alert("Something went Wrong")
+                    }
+                        
+                }
+                
+            })
+            })
+                                  
+     
         
         
         
@@ -48,11 +85,32 @@
         <tbody>
            
     {{#each list}}
-            <tr>
+        <!--    <tr>
+                
+                tr data-id= "{{_id}}">
+                
+                <td >
+                    <span delete data-id="{{_id}}">
+                        {{username}}
+                    </span>
+                    <button class="delete" data-id="{{_id}}"> Delete </button>
+                </td>
+                <td id="{{_id}}"> {{username}}</td>
+                <!-- td has _id
+                
+      <td id=_id> username
+                <button class="delete"> Delete</button></td>
+             -->
+                -->
+                
+        <tr>
+            <tr data-id="{{_id}}">
                 <!-- td has _id-->
-      <td id="{{_id}}"> {{listname}}</td>
-  <td id="{{_id}}"> {{date}}</td>
-                    
+      <td> {{name}}</td>
+  <td > {{date}}</td>
+ <td> <button class="select" data-id="{{_id}}"> Select</button></td>    
+        <td> <button class="edit"data-id="{{_id}}"> Edit</button> </td>    
+                <td><button class="delete" data-id="{{_id}}"> Delete</button></td>    
         </tr>
         {{/each}}
     </tbody>
@@ -64,10 +122,19 @@
     </form>
      <!-- allow td to be clicked 
 using script when clicked id from user it will submit-->
-    <form action="selectlist" id="formid">
+    <form action="selectlist" id="formid" method="POST">
     <input type="hidden" name="id" id="id">
     </form>
     
+     <form action="deletelist" id="deletelist" method="POST">
+    <input type="hidden" name="id" id="deleteid">
+    </form>
+    
+    <form action="edit" id="edit" method="POST">
+    <input type="hidden" name="id" id="editid">
+    </form>
+   
+   
     
     <form action="back">
     <input type="submit" value="Back">

@@ -10,7 +10,7 @@ const {List} = require("./model/list.js")
 const {Item} = require("./model/item.js")
 const hbs= require("hbs")
 
-
+ ObjectID = require('mongodb').ObjectID; 
 
 
 
@@ -37,16 +37,73 @@ app.use(express.static(__dirname+"/public"))
 
 app.get("/", function(req,res){
 
-  
+  let itemlist;
+    let listname;
+    console.log(req.cookies.curList)
    // console.log(req.cookies.loggeduser)
     if(req.cookies.loggeduser){
+        if(!req.cookies.curList){
         
         console.log(req.cookies.UserId)
     
       res.render("home.hbs",{
         username: req.cookies.loggeduser
+          
       })
+        }
+        
+        
+        
+        else{
+            console.log("whyareyouhere")
+        List.findOne({
+           _id: req.cookies.curList
+    }, (err,doc)=>{
+        
+        if(err){
+            res.send("Something went Wrong")
+        }else{
+            
+    listname= doc.name
+             itemlist= doc.item
+          
+            console.log(doc.name)
+            console.log(listname)
+        }
+           
+       
+if(itemlist==null){
+    console.log("listname"+ listname)
+       res.render("home.hbs",{
+        username: req.cookies.loggeduser,
+        list: listname
+              })
+}else{
+  
+  List.find({  _id : { $in : itemlist}
+    }, (err,docs)=>{
+        
+   if(err){
+            res.send("Something went Wrong")
+        }else{
+            
+     res.render("home.hbs",{
+        username: req.cookies.loggeduser,
+        list: listname,
+         items: docs
+              })
+            console.log(docs);
+        }
+        
+    })  
+}
+            
+            
+           
+        })
+                    
   }
+    }
     else{
         res.sendFile(__dirname+"/public/login.html")
     }
@@ -164,6 +221,7 @@ app.get("/Logout", function(req,res){
     console.log(req.cookies.loggeduser)
   res.clearCookie("loggeduser");
       res.clearCookie("UserId");
+     res.clearCookie("curList");
     res.redirect("/")
 })
 
@@ -226,17 +284,61 @@ app.get("/createlistpage",  function(req,res){
 })
 
 app.post("/deletelist", urlencoder, function(req,res){
-})
-
-app.post("/selectist", urlencoder, function(req,res){
-})
-
-
-
-app.post("/viewlist", urlencoder, function(req,res){
     
+   
+    List.deleteOne({
+        _id: req.body.id
+        
+    }, (err,doc)=>{
+        if(err){
+            res.send(err)
+        }else{
+           
+        }
+        
+    })
+    
+    User.update({
+        _id:req.body.id},{
+                $pull: { list: req.body.id  } 
+            },(err, doc)=>{
+        
+        
+       
+        
+        if(err){
+            res.send("something went wrong")
+        }else{
+          
+                res.send(doc)
+        }
+        
+        
+    })
+    
+})
+
+app.post("/selectlist", urlencoder, function(req,res){
+    fs3= req.body.id;
+   // console.log(fs3+"thisoneoverhere")
+    res.cookie("curList", fs3,{
+        maxAge : 1000*60*60*24*31
+        // 1 month
+        
+        
+    })
+    console.log(req.cookies.curList)
+    res.redirect("/")
+   
+    
+})
+
+
+
+app.get("/viewlist", function(req,res){
+   let listids;
     console.log(req.cookies.UserId)
-       User.findOne({
+     User.findOne({
            _id: req.cookies.UserId
     }, (err,doc)=>{
         // callback function
@@ -245,21 +347,104 @@ app.post("/viewlist", urlencoder, function(req,res){
         }else{
             
             
-            //render all lists
-        //let userid= doc.list
+            
             console.log(doc.list)
-            let listids= doc.list
-            console.log(listids[1])
+             listids= doc.list
+            console.log("why wont it work" +listids)
         }
+           
+       
+console.log("thisone"+listids.map(ObjectID))
+  
+  List.find({  _id : { $in : listids }
+    }, (err,docs)=>{
+        
+   if(err){
+            res.send("Something went Wrong")
+        }else{
+            
+        res.render("viewlist.hbs",{
+        list:docs
+      })
+            console.log(docs);
+        }
+        
+    }) 
     
 
-        
+  /*   List.find({  _id : { $in: User.find(req.cookies.UserId).map(function (doc) {
+      return doc._id
     })
+                        }
+    }, (err,docs)=>{
+        
+   if(err){
+            res.send(err)
+        }else{
+            
+       // res.render("viewlist.hbs",{
+      //  list:docs
+     // })
+            console.log(docs);
+        }*/
+        
+    }) 
 })
     
 
 app.post("/deletefromlist", urlencoder, function(req,res){
 })
+app.post("/edit", urlencoder, function(req,res){
+    console.log(req.body.id)
+    List.findOne({
+        _id: req.body.id 
+              }, (err,doc)=>{
+        
+   if(err){
+            res.send("Something went Wrong")
+        }else{
+            
+        res.render("edit.hbs",{
+        list:doc.name,
+        id: doc._id
+      })
+            console.log(doc);
+        }
+        
+    }) 
+    
+})
+app.post("/editlist", urlencoder, function(req,res){
+    let  listname= req.body.listname
+    let date = req.body.date
+   let id= req.body.id
+   console.log(listname + date+id)
+       List.updateOne({
+           _id:id
+       },{  
+               name : listname,
+               date : date 
+       },(err, doc)=>{
+        
+        
+       
+        
+        if(err){
+            res.send(err)
+        }else{
+          console.log(doc)
+                res.redirect("/viewlist")
+        }
+         
+         
+         })
+    
+    
+    
+    
+    
+})
+
 
     
     app.post("/edititemtime", urlencoder, function(req,res){

@@ -92,14 +92,14 @@
         <br>
         <div id="map"></div>
         
-        <form action="viewlist"  method="post">
+        <form action="viewlist" >
             <input type="submit" value="View Lists">
         </form>
         
         <a href="createlistpage"><input type="submit" value="Create New List"></a>
         
         <a href="Logout"><input type="submit" value="Log Out"></a>
-        
+        <h2> {{list}}</h2>
         <script>
             var map
             var infoWindow
@@ -189,11 +189,11 @@
                     })
                     
                     //ADD TO ITINERARY
-                    //if($('#add')){
-                    //    $('#add').click(function(){
-                            //CODE
-                    //    })
-                    //}
+                    if($('#add')){
+                        $('#add').click(function(){
+                      
+                       })
+                    }
                     
                 }
                            
