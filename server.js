@@ -72,7 +72,7 @@ app.get("/", function(req,res){
             console.log(listname)
         }
            
-       
+    
 if(itemlist==null){
     console.log("listname"+ listname)
        res.render("home.hbs",{
