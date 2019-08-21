@@ -179,14 +179,13 @@
         <br>
         <div id="map"></div>
         
-        <form action="viewlist"  method="post">
+        <form action="viewlist" >
             <input type="submit" value="View Lists">
         </form> <br>
         
         <a href="createlistpage"><input type="submit" value="Create New List"></a>
         
-        
-        
+        <h2> {{list}}</h2>
         <script>
             var map
             var curPlace
@@ -293,11 +292,7 @@
                     $('#filter').change(function(){
                         types = $('#filter').val()
                     })
-                    
-
-
-            
-                    
+                                
                 }
                            
 
